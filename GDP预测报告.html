@@ -116,6 +116,9 @@
   tr:last-child td { border-bottom: none; }
   td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: "SF Mono", "Cascadia Code", "Consolas", monospace; }
   td.growth { text-align: right; }
+  th { white-space: nowrap; }
+  th.num, th.growth { text-align: right; }
+  th, td { vertical-align: middle; }
   .tag {
     display: inline-block;
     font-size: 11px;
@@ -254,6 +257,7 @@
     .card-value { font-size: 22px; }
     .card-label { font-size: 11px; }
     .card-sub { font-size: 11px; }
+    .card-value { white-space: nowrap; }
     .section { padding: 14px 12px; margin-bottom: 12px; }
     .section-title { font-size: 14px; }
     .bar-label { width: 56px; font-size: 11px; padding-right: 6px; }
@@ -261,10 +265,12 @@
     .bar-track { height: 20px; }
     .bar-fill { font-size: 10px; min-width: 32px; padding-right: 4px; }
     .bar-value { width: 40px; font-size: 11px; padding-left: 4px; }
-    table { font-size: 12px; min-width: 520px; }
+    .bar-row { gap: 2px; }
+    table { font-size: 12px; min-width: 460px; }
     th, td { padding: 6px 8px; }
     th { font-size: 10px; }
     td.num { font-size: 12px; }
+    td[style*="font-size"] { font-size: 12px !important; }
     .chart-box { padding: 14px 12px; }
     .waterfall { gap: 3px; padding: 0 2px; }
     .wf-value, .wf-label { font-size: 9px; }
