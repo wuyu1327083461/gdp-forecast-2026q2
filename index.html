@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GDP 预测模型 · 2026 Q2</title>
+<style>
+:root {
+  --bg: #f5f6f8; --card-bg: #fff; --text: #1a1a2e; --text2: #5a5a7a;
+  --border: #e8ecf1; --accent: #2563eb; --alight: #dbeafe; --red: #ef4444;
+  --rlight: #fef2f2; --green: #10b981; --glight: #ecfdf5; --amber: #f59e0b; --alight2: #fffbeb;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.6;padding:0}
+.tab-bar{display:flex;background:var(--card-bg);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10}
+.tab-btn{flex:1;padding:14px 12px;border:none;background:none;font-size:14px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:.15s;font-family:inherit}
+.tab-btn:hover{color:var(--text)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none;padding:24px 20px 40px;max-width:960px;margin:0 auto}
+.tab-panel.active{display:block}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.card{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:16px 14px}
+.card-label{font-size:12px;color:var(--text2);letter-spacing:.5px;margin-bottom:6px}
+.card-value{font-size:24px;font-weight:700;letter-spacing:-.5px}
+.card-sub{font-size:12px;color:var(--text2);margin-top:4px}
+.card.accent{border-left:3px solid var(--accent)}.card.accent .card-value{color:var(--accent)}
+.card.green{border-left:3px solid var(--green)}.card.green .card-value{color:var(--green)}
+.card.amber{border-left:3px solid var(--amber)}.card.amber .card-value{color:var(--amber)}
+.card.slate{border-left:3px solid #64748b}.card.slate .card-value{color:#64748b}
+.section{background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:20px 18px;margin-bottom:14px}
+.section-title{font-size:15px;font-weight:600;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-weight:500;color:var(--text2);font-size:11px;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid var(--border)}
+td{padding:8px 10px;border-bottom:1px solid #f1f5f9}
+tr:last-child td{border-bottom:none}
+td.num{text-align:right;font-family:"SF Mono","Cascadia Code","Consolas",monospace;font-size:12px}
+td.growth{text-align:right;font-weight:500}
+.tag{display:inline-block;font-size:10px;padding:2px 7px;border-radius:4px;font-weight:500}
+.tag-up{background:var(--glight);color:#065f46}
+.tag-down{background:var(--rlight);color:#991b1b}
+.tag-warn{background:var(--alight2);color:#92400e}
+.tag-info{background:var(--alight);color:#1e40af}
+.highlight-row{font-weight:600;background:#f8fafc}
+.bar-row{display:flex;align-items:center;margin-bottom:8px;font-size:13px}
+.bar-label{width:120px;flex-shrink:0;text-align:right;padding-right:10px;color:var(--text2)}
+.bar-track{flex:1;height:20px;background:#f1f5f9;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:10px;font-weight:600;color:#fff;min-width:32px}
+.bar-fill.blue{background:var(--accent)}.bar-fill.green{background:var(--green)}
+.bar-fill.amber{background:var(--amber)}.bar-fill.red{background:var(--red)}
+.bar-value{width:50px;flex-shrink:0;padding-left:8px;font-weight:600;font-size:12px}
+.notes{font-size:12px;color:var(--text2);line-height:1.8;margin-top:10px}
+.notes strong{color:var(--text)}
+.caveat{font-size:11px;color:var(--amber);background:var(--alight2);display:inline-block;padding:3px 10px;border-radius:4px;margin-bottom:18px}
+.footer{text-align:center;padding:20px 8px 12px;font-size:11px;color:var(--text2);border-top:1px solid var(--border);margin-top:10px}
+h1{font-size:22px;font-weight:700;margin-bottom:4px}
+.subtitle{font-size:13px;color:var(--text2);margin-bottom:12px}
+@media(max-width:600px){
+  .tab-bar{overflow-x:auto}
+  .tab-btn{font-size:13px;padding:12px 8px;white-space:nowrap}
+  .tab-panel{padding:16px 12px 30px}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .card-value{font-size:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('index')">首页</button>
+  <button class="tab-btn" onclick="switchTab('jiangxi')">江西省 GDP</button>
+  <button class="tab-btn" onclick="switchTab('zhangshu')">樟树市 GDP</button>
+</div>
+
+<!-- ============ INDEX PANEL ============ -->
+<div class="tab-panel active" id="tab-index">
+  <div style="text-align:center;padding:40px 0">
+    <h1>GDP 预测模型报告</h1>
+    <p class="subtitle">2026 年二季度 · 江西省 & 樟树市</p>
+    <div class="cards" style="max-width:500px;margin:0 auto">
+      <div class="card accent" style="cursor:pointer" onclick="switchTab('jiangxi')">
+        <div class="card-label"><span class="tag tag-info">省级</span></div>
+        <div class="card-value">9591</div>
+        <div class="card-sub">江西省 Q2 GDP 预测（亿元）· +4.1%</div>
+      </div>
+      <div class="card green" style="cursor:pointer" onclick="switchTab('zhangshu')">
+        <div class="card-label"><span class="tag tag-up">县级市</span></div>
+        <div class="card-value">135.3</div>
+        <div class="card-sub">樟树市 Q2 GDP 预测（亿元）· +6.3%</div>
+      </div>
+    </div>
+    <p class="caveat" style="margin-top:20px">⚠ 樟树市 2023-2024 年涉及统计口径调整，跨期增速不可直接对标</p>
+    <div class="footer" style="border:none">数据截至 2026-06-18 · 点击上方标签页查看详细报告</div>
+  </div>
+</div>
+
+<!-- ============ JIANGXI PANEL ============ -->
+<div class="tab-panel" id="tab-jiangxi">
+<h1>江西省 2026 年二季度 GDP 预测</h1>
+<p class="subtitle">基于官方 Q1 数据 + 1-5 月经济指标 | 四种方法交叉验证</p>
+
+<div class="cards">
+  <div class="card accent"><div class="card-label">Q2 GDP 中心值</div><div class="card-value">9591</div><div class="card-sub">亿元 · 区间 9500–9701</div></div>
+  <div class="card green"><div class="card-label">Q2 同比增速</div><div class="card-value">+4.1%</div><div class="card-sub">区间 +3.1% – +5.3%</div></div>
+  <div class="card accent"><div class="card-label">上半年合计</div><div class="card-value">18164</div><div class="card-sub">亿元 · 同比 +4.5%</div></div>
+  <div class="card slate"><div class="card-label">全年展望</div><div class="card-value">~37568</div><div class="card-sub">亿元 · 同比 +4.0%</div></div>
+</div>
+
+<div class="section">
+  <div class="section-title">2026 Q1 实际数据（官方）</div>
+  <table>
+    <tr><td>GDP</td><td class="num">8573.5 亿元</td><td class="growth"><span class="tag tag-up">+5.0%</span></td></tr>
+    <tr><td>一产</td><td class="num">414.2 亿</td><td class="growth">+3.3%</td></tr>
+    <tr><td>二产</td><td class="num">3435.3 亿</td><td class="growth">+4.4%</td></tr>
+    <tr><td>三产</td><td class="num">4724.0 亿</td><td class="growth">+5.6%</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">四种方法交叉验证</div>
+  <table>
+    <tr><th>方法</th><th class="num">增速</th><th class="num">Q2 GDP</th><th class="num">上半年</th></tr>
+    <tr><td>月度趋势外推</td><td class="growth">+3.4%</td><td class="num">9528</td><td class="num">18101</td></tr>
+    <tr><td>累计指标（基准）</td><td class="growth">+3.6%</td><td class="num">9545</td><td class="num">18118</td></tr>
+    <tr><td>Q1 趋势衰减</td><td class="growth">+4.2%</td><td class="num">9603</td><td class="num">18176</td></tr>
+    <tr><td>环比季节性</td><td class="growth">+5.0%</td><td class="num">9688</td><td class="num">18262</td></tr>
+    <tr class="highlight-row"><td>综合（均值）</td><td class="growth"><span class="tag tag-up">+4.1%</span></td><td class="num"><strong>9591</strong></td><td class="num"><strong>18164</strong></td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">各方法增速对比</div>
+  <div class="bar-row"><span class="bar-label">月度趋势外推</span><div class="bar-track"><div class="bar-fill amber" style="width:38%">3.4%</div></div><span class="bar-value">+3.4%</span></div>
+  <div class="bar-row"><span class="bar-label">累计指标</span><div class="bar-track"><div class="bar-fill blue" style="width:40%">3.6%</div></div><span class="bar-value">+3.6%</span></div>
+  <div class="bar-row"><span class="bar-label">Q1趋势衰减</span><div class="bar-track"><div class="bar-fill blue" style="width:47%">4.2%</div></div><span class="bar-value">+4.2%</span></div>
+  <div class="bar-row"><span class="bar-label">环比季节性</span><div class="bar-track"><div class="bar-fill green" style="width:56%">5.0%</div></div><span class="bar-value">+5.0%</span></div>
+</div>
+
+<div class="section">
+  <div class="section-title">1-5 月关键指标</div>
+  <table>
+    <tr><td>规上工业</td><td class="growth">+3.9%</td><td>5月单月骤降至~+1.5%</td></tr>
+    <tr><td>消费零售</td><td class="growth">+3.1%</td><td>温和偏弱</td></tr>
+    <tr><td>固投</td><td class="growth"><span class="tag tag-down">-1.4%</span></td><td>房地产-13.9%主拖累</td></tr>
+    <tr><td>进出口</td><td class="growth"><span class="tag tag-up">+16.8%</span></td><td>出口+11.0% 进口+27.3%</td></tr>
+    <tr><td>高技术制造</td><td class="growth"><span class="tag tag-up">+9.5%</span></td><td>医药/电子拉动</td></tr>
+    <tr><td>PPI</td><td class="growth"><span class="tag tag-up">+9.5%</span></td><td>5月+12.9%</td></tr>
+    <tr><td>CPI</td><td class="growth">+0.7%</td><td>低位运行</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">月度工业增速推演</div>
+  <div class="bar-row"><span class="bar-label">Q1 平均</span><div class="bar-track"><div class="bar-fill blue" style="width:50%">4.4%</div></div><span class="bar-value">+4.4%</span></div>
+  <div class="bar-row"><span class="bar-label">4 月（推算）</span><div class="bar-track"><div class="bar-fill green" style="width:55%">4.8%</div></div><span class="bar-value">+4.8%</span></div>
+  <div class="bar-row"><span class="bar-label">5 月（推算）</span><div class="bar-track"><div class="bar-fill red" style="width:17%">1.5%</div></div><span class="bar-value"><span class="tag tag-down">+1.5%</span></span></div>
+  <div class="bar-row"><span class="bar-label">6 月（预估）</span><div class="bar-track"><div class="bar-fill amber" style="width:21%"></div></div><span class="bar-value">~+1.8%</span></div>
+</div>
+</div>
+
+<!-- ============ ZHANGSHU PANEL ============ -->
+<div class="tab-panel" id="tab-zhangshu">
+<h1>樟树市 2026 年二季度 GDP 预测</h1>
+<p class="subtitle">基于官方数据 + 医药产业特色分析 | 四种方法交叉验证</p>
+<p class="caveat">⚠ 2023-2024年涉及统计口径调整，跨期增速不可直接对标。2025年起为可比口径。</p>
+
+<div class="cards">
+  <div class="card accent"><div class="card-label">Q2 GDP 中心值</div><div class="card-value">135.3</div><div class="card-sub">亿元 · 区间 132.7–138.8</div></div>
+  <div class="card green"><div class="card-label">Q2 同比增速（可比口径）</div><div class="card-value">+6.3%</div><div class="card-sub">区间 +4.2% – +9.0%</div></div>
+  <div class="card accent"><div class="card-label">上半年合计</div><div class="card-value">253.1</div><div class="card-sub">亿元 · 同比 +7.3%</div></div>
+  <div class="card slate"><div class="card-label">全年展望</div><div class="card-value">~522</div><div class="card-sub">亿元 · 同比 +6.5%</div></div>
+</div>
+
+<div class="section">
+  <div class="section-title">历年 GDP</div>
+  <table>
+    <tr><th>年份</th><th class="num">GDP（亿）</th><th class="num">增速</th><th>备注</th></tr>
+    <tr><td>2020</td><td class="num">424.74</td><td class="growth">—</td><td></td></tr>
+    <tr><td>2021</td><td class="num">490.18</td><td class="growth"><span class="tag tag-up">+15.4%</span></td><td></td></tr>
+    <tr><td>2022</td><td class="num">536.95</td><td class="growth"><span class="tag tag-up">+9.5%</span></td><td></td></tr>
+    <tr><td>2023</td><td class="num">510.81</td><td class="growth"><span class="tag tag-warn">(-4.9%)</span></td><td><span class="tag tag-info">口径调整中</span></td></tr>
+    <tr><td>2024</td><td class="num">457.01</td><td class="growth"><span class="tag tag-warn">(-10.5%)</span></td><td><span class="tag tag-info">口径调整收尾</span></td></tr>
+    <tr class="highlight-row"><td>2025</td><td class="num">489.80</td><td class="growth"><span class="tag tag-up">+7.2%</span></td><td>可比口径基准年</td></tr>
+    <tr><td>2026 Q1</td><td class="num">117.74</td><td class="growth"><span class="tag tag-up">+8.6%</span></td><td>可比口径</td></tr>
+  </table>
+  <div class="notes">可比口径有效增速：2024→2025 <strong>+7.2%</strong> | 2025 Q1→2026 Q1 <strong>+8.6%</strong></div>
+</div>
+
+<div class="section">
+  <div class="section-title">四种方法交叉验证</div>
+  <table>
+    <tr><th>方法</th><th class="num">增速</th><th class="num">Q2 GDP</th><th class="num">上半年</th><th>核心逻辑</th></tr>
+    <tr><td>产业结构加权</td><td class="growth">+4.6%</td><td class="num">133.2</td><td class="num">250.9</td><td>医药+11%·白酒+2.5%·盐化工+3%</td></tr>
+    <tr><td>累计指标（基准）</td><td class="growth">+5.5%</td><td class="num">134.4</td><td class="num">252.1</td><td>樟树1-5月工业估+5.5%·消费+3.5%</td></tr>
+    <tr><td>Q1 趋势衰减</td><td class="growth">+6.4%</td><td class="num">135.5</td><td class="num">253.2</td><td>Q1 +8.6% → 衰减2.2pp</td></tr>
+    <tr><td>环比季节性</td><td class="growth">+8.6%</td><td class="num">138.3</td><td class="num">256.0</td><td>Q2/Q1=1.174 医药旺季</td></tr>
+    <tr class="highlight-row"><td>综合（均值）</td><td class="growth"><span class="tag tag-up">+6.3%</span></td><td class="num"><strong>135.3</strong></td><td class="num"><strong>253.1</strong></td><td>区间 132.7–138.8</td></tr>
+  </table>
+</div>
+
+<div class="section">
+  <div class="section-title">樟树市 vs 江西省</div>
+  <table>
+    <tr><th>指标</th><th class="num">樟树市</th><th class="num">江西省</th><th class="num">差异</th></tr>
+    <tr><td>Q1 增速</td><td class="growth"><span class="tag tag-up">+8.6%</span></td><td class="growth">+5.0%</td><td class="growth"><span class="tag tag-up">+3.6pp</span></td></tr>
+    <tr><td>Q2 增速（预测）</td><td class="growth"><span class="tag tag-up">+6.3%</span></td><td class="growth">+4.1%</td><td class="growth"><span class="tag tag-up">+2.2pp</span></td></tr>
+    <tr><td>上半年增速</td><td class="growth"><span class="tag tag-up">+7.3%</span></td><td class="growth">+4.5%</td><td class="growth"><span class="tag tag-up">+2.8pp</span></td></tr>
+    <tr><td>2025 全年</td><td class="growth"><span class="tag tag-up">+7.2%</span></td><td class="growth">~+4.5%</td><td class="growth"><span class="tag tag-up">+2.7pp</span></td></tr>
+  </table>
+  <div class="notes"><strong>领先省均的核心驱动：</strong>医药制造业（省级高技术制造+9.5%）在樟树工业中占比约32%，远超一般县市。白酒（四特酒）、盐化工、中药材贸易构成多元支撑。</div>
+</div>
+
+<div class="section">
+  <div class="section-title">风险与机遇</div>
+  <table>
+    <tr><th></th><th>因素</th><th>方向</th><th>影响</th><th>说明</th></tr>
+    <tr><td style="color:var(--red)">▼</td><td>5月工业骤降</td><td><span class="tag tag-down">风险</span></td><td>高</td><td>省5月工业单月+1.5%，若6月未改善将拖累Q2</td></tr>
+    <tr><td style="color:var(--red)">▼</td><td>房地产深度下行</td><td><span class="tag tag-down">风险</span></td><td>中高</td><td>投资-13.9%，拖累建材、金属家具</td></tr>
+    <tr><td style="color:var(--red)">▼</td><td>消费增速放缓</td><td><span class="tag tag-down">风险</span></td><td>中</td><td>零售+3.1%，白酒消费承压</td></tr>
+    <tr><td style="color:var(--green)">▲</td><td>医药产业高景气</td><td><span class="tag tag-up">机遇</span></td><td>高</td><td>省级高技术制造+9.5%，樟树集中受益</td></tr>
+    <tr><td style="color:var(--green)">▲</td><td>Q2 药材交易旺季</td><td><span class="tag tag-up">机遇</span></td><td>中高</td><td>春夏药材交易活跃，拉动三产</td></tr>
+    <tr><td style="color:var(--green)">▲</td><td>PPI 回升支撑名义GDP</td><td><span class="tag tag-up">机遇</span></td><td>中</td><td>PPI+9.5%对盐化工价格端有利</td></tr>
+  </table>
+</div>
+</div>
+
+<div class="footer">GDP 预测模型报告 · 基于 Python 四种方法交叉验证 · 数据截至 2026-06-18</div>
+
+<script>
+function switchTab(name) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelector(`.tab-btn[onclick*="${name}"]`).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  window.scrollTo(0,0);
+}
+</script>
+</body>
+</html>
