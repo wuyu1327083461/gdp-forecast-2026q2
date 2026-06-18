@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>江西省2026年Q2 GDP预测</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card-bg: #ffffff;
+    --text: #1a1a2e;
+    --text-secondary: #5a5a7a;
+    --border: #e8ecf1;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --red: #ef4444;
+    --red-light: #fef2f2;
+    --green: #10b981;
+    --green-light: #ecfdf5;
+    --amber: #f59e0b;
+    --amber-light: #fffbeb;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 32px 24px;
+  }
+  .container { max-width: 960px; margin: 0 auto; }
+  h1 {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    color: var(--text-secondary);
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+
+  /* Cards grid */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 16px;
+  }
+  .card-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+  .card-value {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+  .card-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+  }
+  .card.primary { border-left: 3px solid var(--accent); }
+  .card.primary .card-value { color: var(--accent); }
+  .card.warn { border-left: 3px solid var(--amber); }
+  .card.warn .card-value { color: var(--amber); }
+  .card.good { border-left: 3px solid var(--green); }
+  .card.good .card-value { color: var(--green); }
+
+  /* Sections */
+  .section {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 22px 20px;
+    margin-bottom: 16px;
+  }
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    text-align: left;
+    font-weight: 500;
+    color: var(--text-secondary);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td { border-bottom: none; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: "SF Mono", "Cascadia Code", "Consolas", monospace; }
+  td.growth { text-align: right; }
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+  .tag-up { background: var(--green-light); color: #065f46; }
+  .tag-down { background: var(--red-light); color: #991b1b; }
+  .tag-warn { background: var(--amber-light); color: #92400e; }
+
+  /* Chart area */
+  .chart-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .chart-box {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 16px;
+  }
+  .chart-box.full { grid-column: 1 / -1; }
+  .chart-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+  canvas { width: 100%; height: auto; }
+
+  /* Bar chart CSS */
+  .bar-chart { width: 100%; }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .bar-label {
+    width: 110px;
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 10px;
+    color: var(--text-secondary);
+  }
+  .bar-track {
+    flex: 1;
+    height: 22px;
+    background: #f1f5f9;
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+    min-width: 38px;
+    transition: width 0.4s ease;
+  }
+  .bar-value {
+    width: 48px;
+    flex-shrink: 0;
+    padding-left: 8px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  /* Waterfall */
+  .waterfall { display: flex; align-items: flex-end; gap: 6px; height: 160px; padding: 0 8px; }
+  .wf-col { flex: 1; display: flex; flex-direction: column; align-items: center; }
+  .wf-bar {
+    width: 100%;
+    max-width: 60px;
+    border-radius: 4px 4px 0 0;
+    position: relative;
+    transition: height 0.5s ease;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .wf-value {
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 4px;
+    text-align: center;
+    color: var(--text);
+  }
+  .wf-label {
+    font-size: 10px;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 2px;
+  }
+  .wf-q1 { background: var(--accent); }
+  .wf-q2 { background: var(--green); }
+  .wf-h1 { background: #6366f1; }
+
+  .note {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-top: 6px;
+  }
+  .note strong { color: var(--text); }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>江西省2026年二季度GDP预测</h1>
+<p class="subtitle">基于官方Q1数据 + 1-5月经济指标 · 2026年6月18日</p>
+
+<!-- Key numbers -->
+<div class="cards">
+  <div class="card primary">
+    <div class="card-label">Q2 GDP 预测</div>
+    <div class="card-value">9,591<span style="font-size:16px;font-weight:500">亿</span></div>
+    <div class="card-sub">区间 9,500 — 9,701亿</div>
+  </div>
+  <div class="card warn">
+    <div class="card-label">Q2 同比增速</div>
+    <div class="card-value">4.1<span style="font-size:16px;font-weight:500">%</span></div>
+    <div class="card-sub">较Q1回落0.9个百分点</div>
+  </div>
+  <div class="card good">
+    <div class="card-label">上半年GDP合计</div>
+    <div class="card-value">18,164<span style="font-size:16px;font-weight:500">亿</span></div>
+    <div class="card-sub">同比 +4.5%</div>
+  </div>
+  <div class="card">
+    <div class="card-label">Q1 实际GDP（官方）</div>
+    <div class="card-value">8,574<span style="font-size:16px;font-weight:500">亿</span></div>
+    <div class="card-sub">同比增长 5.0%</div>
+  </div>
+</div>
+
+<!-- Q1 detail -->
+<div class="section">
+  <div class="section-title">Q1 2026 官方数据（江西省统计局，4月21日发布）</div>
+  <table>
+    <thead>
+      <tr><th>产业</th><th>增加值（亿元）</th><th>同比增速</th><th>占GDP比重</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>第一产业</td><td class="num">414.2</td><td class="growth"><span class="tag tag-up">+3.3%</span></td><td class="num">4.8%</td></tr>
+      <tr><td>第二产业</td><td class="num">3,435.3</td><td class="growth"><span class="tag tag-up">+4.4%</span></td><td class="num">40.1%</td></tr>
+      <tr><td>第三产业</td><td class="num">4,724.0</td><td class="growth"><span class="tag tag-up">+5.6%</span></td><td class="num">55.1%</td></tr>
+      <tr style="font-weight:600; background:#f8fafc">
+        <td>地区生产总值</td><td class="num">8,573.5</td><td class="growth"><span class="tag tag-up">+5.0%</span></td><td class="num">100%</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Indicators -->
+<div class="section">
+  <div class="section-title">1-5月关键指标走势</div>
+  <div class="bar-chart">
+    <div class="bar-row">
+      <span class="bar-label">规模以上工业</span>
+      <div class="bar-track"><div class="bar-fill" style="width:39%;background:var(--accent)">+3.9%</div></div>
+      <span class="bar-value" style="color:var(--accent)">+3.9%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">社会消费品零售</span>
+      <div class="bar-track"><div class="bar-fill" style="width:31%;background:#6366f1">+3.1%</div></div>
+      <span class="bar-value" style="color:#6366f1">+3.1%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">货物贸易进出口</span>
+      <div class="bar-track"><div class="bar-fill" style="width:84%;background:var(--green)">+16.8%</div></div>
+      <span class="bar-value" style="color:var(--green)">+16.8%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">固定资产投资</span>
+      <div class="bar-track"><div class="bar-fill" style="width:14%;background:var(--red);margin-left:auto;margin-right:0;text-align:left;padding-left:8px;justify-content:flex-start">-1.4%</div></div>
+      <span class="bar-value" style="color:var(--red)">-1.4%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">CPI</span>
+      <div class="bar-track"><div class="bar-fill" style="width:14%;background:#94a3b8">+0.7%</div></div>
+      <span class="bar-value" style="color:#64748b">+0.7%</span>
+    </div>
+    <div class="bar-row">
+      <span class="bar-label">PPI</span>
+      <div class="bar-track"><div class="bar-fill" style="width:95%;background:var(--amber)">+9.5%</div></div>
+      <span class="bar-value" style="color:var(--amber)">+9.5%</span>
+    </div>
+  </div>
+</div>
+
+<!-- Monthly industrial trend -->
+<div class="chart-row">
+  <div class="chart-box">
+    <div class="chart-title">月度工业增速推演（%）</div>
+    <div class="bar-chart">
+      <div class="bar-row">
+        <span class="bar-label">Q1 平均</span>
+        <div class="bar-track"><div class="bar-fill" style="width:60%;background:var(--accent)">+4.4%</div></div>
+        <span class="bar-value" style="color:var(--accent)">+4.4%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">4月（推算）</span>
+        <div class="bar-track"><div class="bar-fill" style="width:64%;background:var(--green)">+4.8%</div></div>
+        <span class="bar-value" style="color:var(--green)">+4.8%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">5月（推算）</span>
+        <div class="bar-track"><div class="bar-fill" style="width:20%;background:var(--red)">+1.5%</div></div>
+        <span class="bar-value" style="color:var(--red)">+1.5%</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">6月（预估）</span>
+        <div class="bar-track"><div class="bar-fill" style="width:24%;background:var(--amber)">+1.8%</div></div>
+        <span class="bar-value" style="color:var(--amber)">+1.8%</span>
+      </div>
+    </div>
+    <p class="note" style="margin-top:10px">由累计增速反推：1-4月累计+4.5%→4月+4.8%；1-5月累计+3.9%→5月骤降至+1.5%</p>
+  </div>
+
+  <!-- Q1/Q2 waterfall -->
+  <div class="chart-box">
+    <div class="chart-title">上半年GDP走势（亿元）</div>
+    <div class="waterfall">
+      <div class="wf-col">
+        <div class="wf-bar wf-q1" style="height:141px"></div>
+        <div class="wf-value">8,574</div>
+        <div class="wf-label">Q1实际<br>+5.0%</div>
+      </div>
+      <div class="wf-col">
+        <div class="wf-bar wf-q2" style="height:158px;opacity:0.7;border:2px dashed var(--green);background:transparent"></div>
+        <div class="wf-value">9,591</div>
+        <div class="wf-label">Q2预测<br>+4.1%</div>
+      </div>
+      <div class="wf-col">
+        <div class="wf-bar wf-h1" style="height:120px"></div>
+        <div class="wf-value">18,164</div>
+        <div class="wf-label">H1合计<br>+4.5%</div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:8px">Q2柱体为预测值（虚线边框）。H1柱体按实际比例缩放到同一坐标系。</p>
+  </div>
+</div>
+
+<!-- Forecast methods -->
+<div class="section">
+  <div class="section-title">四种预测方法对比</div>
+  <table>
+    <thead>
+      <tr><th>方法</th><th>逻辑</th><th>Q2增速</th><th>Q2 GDP（亿元）</th><th>上半年GDP（亿元）</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td style="font-weight:500">月度趋势外推</td>
+        <td style="color:var(--text-secondary);font-size:13px">4月+4.8%→5月+1.5%→6月+1.8%，三产4.2%</td>
+        <td class="growth"><span class="tag tag-warn">3.4%</span></td>
+        <td class="num">9,528</td>
+        <td class="num">18,101</td>
+      </tr>
+      <tr>
+        <td style="font-weight:500">累计指标基准</td>
+        <td style="color:var(--text-secondary);font-size:13px">1-5月工业3.9%+消费3.1%+投资-1.4%综合</td>
+        <td class="growth"><span class="tag tag-warn">3.6%</span></td>
+        <td class="num">9,545</td>
+        <td class="num">18,118</td>
+      </tr>
+      <tr>
+        <td style="font-weight:500">Q1趋势衰减</td>
+        <td style="color:var(--text-secondary);font-size:13px">Q1+5.0%减去5月衰减幅度(~0.8pp)</td>
+        <td class="growth"><span class="tag tag-up">4.2%</span></td>
+        <td class="num">9,603</td>
+        <td class="num">18,176</td>
+      </tr>
+      <tr>
+        <td style="font-weight:500">环比季节性</td>
+        <td style="color:var(--text-secondary);font-size:13px">Q2/Q1≈1.13历史比值直接推算</td>
+        <td class="growth"><span class="tag tag-up">5.0%</span></td>
+        <td class="num">9,688</td>
+        <td class="num">18,262</td>
+      </tr>
+      <tr style="font-weight:600;background:#f8fafc">
+        <td>综合（等权平均）</td>
+        <td style="color:var(--text-secondary);font-size:13px"></td>
+        <td class="growth"><span class="tag tag-up">4.1%</span></td>
+        <td class="num" style="color:var(--accent)">9,591</td>
+        <td class="num" style="color:var(--accent)">18,164</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Risk analysis -->
+<div class="section">
+  <div class="section-title">风险与支撑因素</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+    <div style="background:var(--red-light);border-radius:6px;padding:14px">
+      <div style="font-size:13px;font-weight:600;color:#991b1b;margin-bottom:8px">⬇ 下行风险</div>
+      <ul style="font-size:12px;color:#7f1d1d;padding-left:16px;line-height:1.8">
+        <li>5月工业增速骤降至~1.5%，若6月未能回升将显著拖累Q2</li>
+        <li>房地产投资-13.9%，销售面积-5.9%，行业仍在探底</li>
+        <li>消费增速3.1%低于Q1服务业5.6%，内需动力不足</li>
+        <li>民间投资-1.9%，企业信心偏弱</li>
+      </ul>
+    </div>
+    <div style="background:var(--green-light);border-radius:6px;padding:14px">
+      <div style="font-size:13px;font-weight:600;color:#065f46;margin-bottom:8px">⬆ 支撑因素</div>
+      <ul style="font-size:12px;color:#065f46;padding-left:16px;line-height:1.8">
+        <li>出口+11.0%，集成电路+104%、汽车+90%增长强劲</li>
+        <li>高技术制造业+9.5%、装备制造业+7.7%，新动能较快</li>
+        <li>PPI+9.5%回升明显，推升名义GDP</li>
+        <li>基础设施投资+6.9%，政府端发力</li>
+        <li>6月可能出台稳增长政策（降准降息、消费刺激等）</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<p class="note" style="margin-top:16px">
+  <strong>数据来源：</strong>江西省统计局（Q1 2026官方发布）、江西省人民政府微信公众号文章（1-5月经济数据，2026-06-18）。
+  <strong>方法说明：</strong>Q2预测采用月度趋势外推、累计指标情景、Q1趋势衰减、环比季节性四种方法等权平均。
+  实际GDP按不变价格计算，PPI上涨(+9.5%)对名义GDP有额外推升，本表增速均为实际增速口径。
+</p>
+
+</div>
+</body>
+</html>
