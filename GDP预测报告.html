@@ -242,6 +242,7 @@
   @media (max-width: 768px) {
     .cards { grid-template-columns: repeat(2, 1fr); }
     .chart-row { grid-template-columns: 1fr; }
+    .chart-row { gap: 12px; }
     .section { padding: 16px 14px; }
     h1 { font-size: 21px; }
     .card-value { font-size: 24px; }
@@ -260,7 +261,7 @@
     .card-value { white-space: nowrap; }
     .card-value span { font-size: 14px !important; }
     .section { padding: 14px 12px; margin-bottom: 12px; }
-    .section-title { font-size: 14px; }
+    .section-title { font-size: 14px; font-weight: 700; }
     .bar-label { width: 65px; font-size: 11px; padding-right: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .bar-row { font-size: 11px; }
     .bar-track { height: 20px; }
@@ -273,12 +274,15 @@
     td.num { font-size: 12px; }
     td[style*="font-size"] { font-size: 12px !important; }
     .chart-box { padding: 12px 10px; }
-    .waterfall { height: 130px; gap: 2px; padding: 0 2px; }
-    .wf-value, .wf-label { font-size: 9px; }
+    .chart-title { font-size: 12px; margin-bottom: 10px; }
+    .waterfall { height: 160px; gap: 3px; padding: 0 4px; }
+    .wf-value, .wf-label { font-size: 10px; }
     .wf-bar { max-width: 50px; }
-    .note { font-size: 11px; }
+    .note { font-size: 11px; line-height: 1.6; }
     .tag { font-size: 10px; padding: 1px 6px; }
     .section > div[style*="1fr 1fr"] { grid-template-columns: 1fr !important; }
+    .section div[style*="font-size:13px"] { font-size: 12px !important; }
+    .section ul[style*="font-size:12px"] { font-size: 11px !important; }
   }
 </style>
 </head>

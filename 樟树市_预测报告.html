@@ -249,6 +249,7 @@
   @media (max-width: 768px) {
     .cards { grid-template-columns: repeat(2, 1fr); }
     .row-2 { grid-template-columns: 1fr; }
+    .row-2 { gap: 12px; }
     .section { padding: 16px 14px; }
     h1 { font-size: 21px; }
     .card-value { font-size: 22px; }
@@ -269,7 +270,7 @@
     .card-value { white-space: nowrap; }
     .card-value span { font-size: 13px !important; }
     .section { padding: 14px 12px; margin-bottom: 12px; }
-    .section-title { font-size: 14px; }
+    .section-title { font-size: 14px; font-weight: 700; }
     .bar-label { width: 65px; font-size: 11px; padding-right: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .bar-row { font-size: 11px; }
     .bar-track { height: 20px; }
@@ -281,10 +282,12 @@
     th { font-size: 10px; }
     td.num { font-size: 12px; }
     td[style*="font-size"] { font-size: 12px !important; }
-    .note, .notes { font-size: 11px; }
+    .note, .notes { font-size: 11px; line-height: 1.6; }
     .tag { font-size: 10px; padding: 1px 5px; }
     .range-label { width: 60px; font-size: 11px; }
     .range-val { font-size: 11px; width: 45px; }
+    .range-dot { width: 12px; height: 12px; top: -2px; }
+    .range-track { height: 6px; }
     .range-bar { gap: 4px; }
   }
 </style>
