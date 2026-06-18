@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
@@ -238,9 +238,47 @@
     margin: 14px 0;
   }
 
-  @media (max-width: 700px) {
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  @media (max-width: 768px) {
     .cards { grid-template-columns: repeat(2, 1fr); }
     .row-2 { grid-template-columns: 1fr; }
+    .section { padding: 16px 14px; }
+    h1 { font-size: 21px; }
+    .card-value { font-size: 22px; }
+    .bar-label { width: 90px; }
+    .range-label { width: 80px; }
+  }
+
+  @media (max-width: 480px) {
+    body { padding: 16px 12px; }
+    h1 { font-size: 18px; }
+    .subtitle { font-size: 12px; }
+    .caveat { font-size: 11px; padding: 2px 8px; margin-bottom: 16px; }
+    .cards { grid-template-columns: 1fr; gap: 10px; }
+    .card { padding: 14px 12px; }
+    .card-value { font-size: 20px; }
+    .card-label { font-size: 10px; }
+    .card-sub { font-size: 11px; }
+    .section { padding: 14px 12px; margin-bottom: 12px; }
+    .section-title { font-size: 14px; }
+    .bar-label { width: 56px; font-size: 11px; padding-right: 6px; }
+    .bar-row { font-size: 11px; }
+    .bar-track { height: 20px; }
+    .bar-fill { font-size: 10px; min-width: 32px; padding-right: 4px; }
+    .bar-value { width: 40px; font-size: 11px; padding-left: 4px; }
+    table { font-size: 12px; min-width: 520px; }
+    th, td { padding: 6px 8px; }
+    th { font-size: 10px; }
+    td.num { font-size: 12px; }
+    .note, .notes { font-size: 11px; }
+    .tag { font-size: 10px; padding: 1px 5px; }
+    .range-label { width: 60px; font-size: 11px; }
+    .range-val { font-size: 11px; width: 45px; }
+    .range-bar { gap: 4px; }
   }
 </style>
 </head>
@@ -278,7 +316,7 @@
 <!-- Historical Data -->
 <div class="section">
   <div class="section-title">一、樟树市历年 GDP（2020–2025）</div>
-  <table>
+  <div class="table-wrap"><table>
     <thead>
       <tr><th>年份</th><th class="num">GDP（亿元）</th><th class="num">增速</th><th>备注</th></tr>
     </thead>
@@ -290,13 +328,13 @@
       <tr><td>2024</td><td class="num">457.01</td><td class="growth"><span class="tag tag-warn">(-10.5%)</span></td><td><span class="tag tag-info">口径调整收尾</span></td></tr>
       <tr style="font-weight:600;background:#f8fafc"><td>2025</td><td class="num">489.80</td><td class="growth"><span class="tag tag-up">+7.2%</span></td><td>可比口径基准年</td></tr>
     </tbody>
-  </table>
+  </table></div>
 </div>
 
 <!-- Prediction Methods -->
 <div class="section">
   <div class="section-title">二、四种方法交叉验证</div>
-  <table>
+  <div class="table-wrap"><table>
     <thead>
       <tr><th>方法</th><th class="num">Q2 增速</th><th class="num">Q2 GDP（亿元）</th><th class="num">上半年 GDP（亿元）</th><th>核心逻辑</th></tr>
     </thead>
@@ -327,7 +365,7 @@
         <td>区间 132.7–138.8 亿元</td>
       </tr>
     </tbody>
-  </table>
+  </table></div>
 </div>
 
 <!-- Charts Row -->
@@ -392,7 +430,7 @@
 <!-- Zhangshu vs Jiangxi -->
 <div class="section">
   <div class="section-title">三、樟树市 vs 江西省 对比</div>
-  <table>
+  <div class="table-wrap"><table>
     <thead>
       <tr><th>指标</th><th class="num">樟树市</th><th class="num">江西省</th><th class="num">差异</th></tr>
     </thead>
@@ -422,7 +460,7 @@
         <td class="growth"><span class="tag tag-up">+2.7pp</span></td>
       </tr>
     </tbody>
-  </table>
+  </table></div>
   <div class="notes" style="margin-top:12px">
     <strong>樟树领先省均的核心驱动：</strong>医药制造业（归属省级高技术制造 +9.5%）在樟树工业中占比约32%，远超一般县市。白酒（四特酒）、盐化工、中药材贸易构成多元产业支撑。
   </div>
@@ -431,7 +469,7 @@
 <!-- Indicators -->
 <div class="section">
   <div class="section-title">四、江西省 1-5 月关键经济指标（累计同比）</div>
-  <table>
+  <div class="table-wrap"><table>
     <thead>
       <tr><th>指标</th><th class="num">累计同比</th><th>趋势</th><th>对樟树的影响</th></tr>
     </thead>
@@ -445,7 +483,7 @@
       <tr><td>CPI</td><td class="growth">+0.7%</td><td>→ 低位</td><td>消费端价格平稳</td></tr>
       <tr><td>PPI（购进）</td><td class="growth"><span class="tag tag-up">+9.5%</span></td><td>⬆ 回升</td><td>盐化工价格端有支撑</td></tr>
     </tbody>
-  </table>
+  </table></div>
 </div>
 
 <!-- Monthly Trend -->
@@ -493,7 +531,7 @@
     <span class="range-val" style="color:var(--accent);font-weight:700">135.3</span>
     <span class="range-val" style="color:var(--text-secondary)">140 亿</span>
   </div>
-  <table style="margin-top:14px">
+  <div class="table-wrap"><table style="margin-top:14px">
     <thead>
       <tr><th>情景</th><th class="num">增速</th><th class="num">Q2 GDP</th><th class="num">上半年 GDP</th><th>假设条件</th></tr>
     </thead>
@@ -520,13 +558,13 @@
         <td>医药旺季超预期+6月强政策刺激+出口拉动</td>
       </tr>
     </tbody>
-  </table>
+  </table></div>
 </div>
 
 <!-- Risk & Opportunities -->
 <div class="section">
   <div class="section-title">七、风险与机遇</div>
-  <table>
+  <div class="table-wrap"><table>
     <thead>
       <tr><th style="width:20px"></th><th>因素</th><th>方向</th><th>影响程度</th><th>说明</th></tr>
     </thead>
@@ -581,7 +619,7 @@
         <td>PPI+9.5%对盐化工等价格端有支撑</td>
       </tr>
     </tbody>
-  </table>
+  </table></div>
 </div>
 
 <!-- Footer -->
