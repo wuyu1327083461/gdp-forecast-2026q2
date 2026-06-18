@@ -161,7 +161,7 @@
     margin-bottom: 8px;
     font-size: 13px;
   }
-  .bar-label {
+  .bar-label { overflow: hidden; white-space: nowrap; text-overflow: ellipsis;
     width: 110px;
     flex-shrink: 0;
     text-align: right;
@@ -176,7 +176,7 @@
     overflow: hidden;
     position: relative;
   }
-  .bar-fill {
+  .bar-fill { overflow: hidden;
     height: 100%;
     border-radius: 4px;
     display: flex;
@@ -198,7 +198,7 @@
   }
 
   /* Waterfall */
-  .waterfall { display: flex; align-items: flex-end; gap: 6px; height: 160px; padding: 0 8px; }
+  .waterfall { display: flex; align-items: flex-end; gap: 6px; height: auto; padding: 0 8px 6px 8px; }
   .wf-col { flex: 1; display: flex; flex-direction: column; align-items: center; }
   .wf-bar {
     width: 100%;
@@ -247,7 +247,7 @@
     .section { padding: 16px 14px; }
     h1 { font-size: 21px; }
     .card-value { font-size: 24px; }
-    .bar-label { width: 85px; }
+    .bar-label { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; width: 85px; }
   }
 
   @media (max-width: 480px) {
@@ -263,7 +263,7 @@
     .card-value span { font-size: 14px !important; }
     .section { padding: 14px 12px; margin-bottom: 12px; }
     .section-title { font-size: 14px; font-weight: 700; }
-    .bar-label { width: 65px; font-size: 11px; padding-right: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .bar-label { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; width: 65px; font-size: 11px; padding-right: 5px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .bar-row { font-size: 11px; }
     .bar-track { height: 20px; }
     .bar-fill { font-size: 10px; min-width: 32px; padding-right: 4px; }
