@@ -124,11 +124,11 @@
     border-bottom: 1px solid #f1f5f9;
   }
   tr:last-child td { border-bottom: none; }
-  .table-center td, .table-center th { text-align: center; }
   td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: "SF Mono", "Cascadia Code", "Consolas", monospace; font-size: 13px; }
   td.growth { text-align: right; font-weight: 500; }
   th { white-space: nowrap; }
   th.num, th.growth { text-align: right; }
+  .table-center td.num, .table-center td.growth, .table-center th.num, .table-center th.growth { text-align: center !important; }
   th, td { vertical-align: middle; }
 
   .tag {
